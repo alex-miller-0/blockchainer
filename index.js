@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-// Require logic.js file and extract controller functions using JS destructuring assignment
-// const { addContact, getContact } = require('./logic');
+const { run } = require('./src/run.js');
 
 program
   .version('0.0.0')
@@ -13,8 +12,7 @@ program
   .alias('r')
   .description('Run the checkpointer over an interval (in ms)')
   .action((interval) => {
-    // addContact({firstname, lastname, phone, email});
-    console.log('Running over interval', interval)
+    run(interval);
   });
 
 program.parse(process.argv);
