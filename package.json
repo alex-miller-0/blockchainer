@@ -1,5 +1,5 @@
 {
-  "name": "connector",
+  "name": "blockchainer",
   "preferGlobal": true,
   "bin": "./index.js",
   "version": "0.0.0",
