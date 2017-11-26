@@ -1,0 +1,32 @@
+{
+  "name": "connector",
+  "preferGlobal": true,
+  "bin": "./index.js",
+  "version": "0.0.0",
+  "description": "A simple daemon process that checkpoints your blockchain onto a public network (e.g. Ethereum)",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "npm link connector",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-miller-0/blockchain-connector.git"
+  },
+  "keywords": [
+    "Blockchain",
+    "Ethereum",
+    "Daemon"
+  ],
+  "author": "Alex Miller",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alex-miller-0/blockchain-connector/issues"
+  },
+  "homepage": "https://github.com/alex-miller-0/blockchain-connector#readme",
+  "dependencies": {
+    "commander": "^2.12.1",
+    "folder-hash": "^1.1.2",
+    "web3": "^1.0.0-beta.18"
+  }
+}

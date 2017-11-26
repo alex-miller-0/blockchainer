@@ -1,0 +1,7 @@
+{
+  "PRIVATE_HOST": "http://localhost:8545",
+  "PUBLIC_HOST": "http://localhost:8546",
+  "STATE_DIR": "./",
+  "CONTRACT_ADDR": "",
+  "MNEMONIC": "economy chuckle twin square rose provide friend combine fashion wheel purse huge"
+}
