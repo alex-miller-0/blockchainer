@@ -6,7 +6,7 @@
   "description": "A simple daemon process that checkpoints your blockchain onto a public network (e.g. Ethereum)",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm link connector",
+    "postinstall": "npm link blockchainer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,7 +26,7 @@
   "homepage": "https://github.com/alex-miller-0/blockchain-connector#readme",
   "dependencies": {
     "commander": "^2.12.1",
-    "folder-hash": "^1.1.2",
+    "rlp": "^2.0.0",
     "web3": "^1.0.0-beta.18"
   }
 }
