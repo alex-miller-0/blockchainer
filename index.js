@@ -8,11 +8,11 @@ program
   .description('A command line tool to checkpoint your blockchain onto a public network.');
 
 program
-  .command('run <interval>')
+  .command('run <interval> <chainId>')
   .alias('r')
   .description('Run the checkpointer over an interval (in ms)')
-  .action((interval) => {
-    run(interval);
+  .action((interval, chainId) => {
+    run(interval, chainId);
   });
 
 program.parse(process.argv);

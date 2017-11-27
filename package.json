@@ -25,7 +25,11 @@
   },
   "homepage": "https://github.com/alex-miller-0/blockchain-connector#readme",
   "dependencies": {
+    "bip39": "^2.4.0",
     "commander": "^2.12.1",
+    "ethereumjs-tx": "^1.3.3",
+    "ethereumjs-wallet": "^0.6.0",
+    "left-pad": "^1.2.0",
     "rlp": "^2.0.0",
     "web3": "^1.0.0-beta.18"
   }

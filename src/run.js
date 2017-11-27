@@ -18,12 +18,13 @@
 // of the snapshot.
 //
 const config = require('../config.json');
-const Web3 = require('web3');
-const web3Public = new Web3(new Web3.providers.HttpProvider(config.PUBLIC_HOST));
 const fs = require('fs');
 const rlp = require('rlp');
+const leftPad = require('left-pad');
+const { getAddress, signTransaction } = require('./keys.js');
+const { getNonce, sendSigned } = require('./eth.js');
 
-const run = (interval) => {
+const run = (interval, chainId) => {
   let blockNumber;
   let stateHash;
 
@@ -35,8 +36,7 @@ const run = (interval) => {
     .then((data) => {
       blockNumber = data[0];
       stateHash = data[1];
-      console.log('blockNumber', blockNumber);
-      console.log('stateHash', stateHash);
+      return saveCheckpoint(blockNumber, stateHash, chainId);
     })
     .catch(function(err) { console.log('Error:', err); })
   }, interval*1000);
@@ -66,6 +66,30 @@ const getParityManifest = () => {
     // // The state root hash
     const stateHash = decoded[3].toString('hex');
     resolve([blockNumber, stateHash]);
+  })
+}
+
+const saveCheckpoint = (blockNumber, stateHash, chainId) => {
+  return new Promise((resolve, reject) => {
+    if (!chainId) { chainId = '0'; }
+    const data = `0x${leftPad(blockNumber.toString(16), 64, '0')}${stateHash}${leftPad(chainId.toString(16), 64, '0')}`;
+    console.log('data', data);
+    const tx = {
+      nonce: null,
+      gasPrice: config.GAS_PRICE,
+      gasLimit: config.GAS_LIMIT,
+      to: config.CONTRACT,
+      value: '0x0',
+      data: data,
+    };
+
+    getNonce(getAddress())
+    .then((nonce) => {
+      tx.nonce = nonce;
+      const rawTx = signTransaction(tx);
+      console.log('rawTx', rawTx);
+      // return eth.sendSigned(rawTx);
+    })
   })
 }
 
