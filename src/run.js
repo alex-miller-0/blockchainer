@@ -3,18 +3,22 @@
 //   1. PRIVATE_HOST - the URL to access the blockchain we will be checkpointing
 //   2. PUBLIC_HOST - the URL to access the blockchain where the checkpoint is being saved
 //   3. CONTRACT - the address for the contract (the method name should be standardized)
-//   4. STATE_DIR - the local directory that has the state (to be checkpointed)
 //
-// This will do the following:
-//   1. Get the block number from the local chain
-//   2. Hash the state directory
-//   3. Get the block number from the local chain again. If this is different,
-//      we will include both (thus the state could correspond to any of the
-//      blocks in the range).
-//   4. Save the state hash and the block range to the public chain via the contract.
+// You will also need to provide a location for your Ethereum node's data.
+// For parity, this is specified with PARITY_DIR.
+//
+// Finally, you will need to specify the name of the chain you want to snapshot.
+// This is provided as CHAIN_NAME.
+//
+// This will get the following information from your local node:
+//   1. Block number of snapshot
+//   2. State hash corresponding to block number
+//
+// Using this hash and the snapshotted data, we can verify the state at the point
+// of the snapshot.
+//
 const config = require('../config.json');
 const Web3 = require('web3');
-const web3Private = new Web3(new Web3.providers.HttpProvider(config.PRIVATE_HOST));
 const web3Public = new Web3(new Web3.providers.HttpProvider(config.PUBLIC_HOST));
 const fs = require('fs');
 const rlp = require('rlp');
@@ -24,7 +28,10 @@ const run = (interval) => {
   let stateHash;
 
   setInterval(function() {
-    getParityManifest()
+    getManifestFunction()
+    .then((manifestFunction) => {
+      return manifestFunction();
+    })
     .then((data) => {
       blockNumber = data[0];
       stateHash = data[1];
@@ -35,6 +42,14 @@ const run = (interval) => {
   }, interval*1000);
 }
 
+const getManifestFunction = () => {
+  return new Promise((resolve, reject) => {
+    if (config.PARITY_DIR && config.PARITY_DIR != ''
+      && config.CHAIN_NAME && config.CHAIN_NAME != '') { resolve(getParityManifest); }
+    else { reject('Insufficient configuration for finding snapshot.'); }
+  })
+}
+
 
 // If the user is running a parity node for the private chain, we can take the
 // state hash and corresponding block number stored in the snapshot that is
@@ -42,8 +57,7 @@ const run = (interval) => {
 // See here: https://github.com/paritytech/parity/wiki/Warp-Sync-Snapshot-Format
 const getParityManifest = () => {
   return new Promise((resolve, reject) => {
-    const snapshotDir = `${config.PARITY_DIR}/chains/${config.PRIVATE_CHAIN_NAME}/db/906a34e69aec8c0d/snapshot/current/MANIFEST`;
-    console.log('snapshot', snapshotDir);
+    const snapshotDir = `${config.PARITY_DIR}/chains/${config.CHAIN_NAME}/db/906a34e69aec8c0d/snapshot/current/MANIFEST`;
     const encoded = fs.readFileSync(snapshotDir);
     const decoded = rlp.decode(encoded);
     if (decoded[0].toString('hex') != '02') { reject('Unable to process MANIFEST.') }
