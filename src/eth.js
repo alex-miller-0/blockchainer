@@ -12,14 +12,11 @@ const sendSigned = (tx) => {
   })
 }
 
-// Get a user's nonce
 const getNonce = (addr) => {
   return new Promise((resolve, reject) => {
-    console.log('addr', addr)
-    resolve(0)
-    // web3.eth.getTransactionCount(addr)
-    // .then((nonce) => { resolve(nonce); })
-    // .catch(err) => { reject(err); }
+    web3.eth.getTransactionCount(addr)
+    .then((nonce) => { resolve(nonce); })
+    .catch((err) => { reject(err); })
   })
 }
 

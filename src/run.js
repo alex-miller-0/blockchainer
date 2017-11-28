@@ -38,6 +38,7 @@ const run = (interval, chainId) => {
       stateHash = data[1];
       return saveCheckpoint(blockNumber, stateHash, chainId);
     })
+    .then((txHash) => { console.log(`${new Date()} Checkpointed block ${blockNumber} with state hash ${stateHash}.`)})
     .catch(function(err) { console.log('Error:', err); })
   }, interval*1000);
 }
@@ -72,8 +73,8 @@ const getParityManifest = () => {
 const saveCheckpoint = (blockNumber, stateHash, chainId) => {
   return new Promise((resolve, reject) => {
     if (!chainId) { chainId = '0'; }
-    const data = `0x${leftPad(blockNumber.toString(16), 64, '0')}${stateHash}${leftPad(chainId.toString(16), 64, '0')}`;
-    console.log('data', data);
+    // Corresponds to function saveCheckpoint(uint blockNumber, bytes32 stateHash, uint chainId)
+    const data = `0x73bf9915${leftPad(blockNumber.toString(16), 64, '0')}${stateHash}${leftPad(chainId.toString(16), 64, '0')}`;
     const tx = {
       nonce: null,
       gasPrice: config.GAS_PRICE,
@@ -82,14 +83,14 @@ const saveCheckpoint = (blockNumber, stateHash, chainId) => {
       value: '0x0',
       data: data,
     };
-
     getNonce(getAddress())
     .then((nonce) => {
       tx.nonce = nonce;
       const rawTx = signTransaction(tx);
-      console.log('rawTx', rawTx);
-      // return eth.sendSigned(rawTx);
+      return sendSigned(rawTx);
     })
+    .then((txHash) => { console.log('got txhash', txHash); resolve(txHash); })
+    .catch((err) => { reject(err); })
   })
 }
 
